@@ -60,7 +60,7 @@ from django.core.cache import cache
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-from app01 import models, wx_login
+from app01 import models, wx_login, confirm, serializer
 
 
 class Login(APIView):
@@ -73,7 +73,7 @@ class Login(APIView):
             if data:
                 # 将openid 和 session_key拼接
                 val = data['openid'] + "&" + data["session_key"]
-                key = data["openid"] + str(int(time.time()))
+                key = data['openid'] + str(int(time.time()))
                 # 将 key 加密
                 md5 = hashlib.md5()
                 md5.update(key.encode("utf-8"))
@@ -87,9 +87,41 @@ class Login(APIView):
                 return Response({
                     "code": 200,
                     "msg": "ok",
-                    "data": {"login_key": key}
+                    "data": {
+                        "openid": data['openid'],
+                        "login_key": key
+                    }
                 })
             else:
                 return Response({"code": 401, "msg": "code无效"})
         else:
             return Response({"code": 401, "msg": "缺少参数"})
+
+
+class Confirm(APIView):
+    def post(self, request):
+        param = request.data
+        # 需要小程序端将 encryptedData iv login_key 的值传到后端
+        # encryptedData iv session_key 用于解密获取用户信息
+        # login_key 用于校验用户登录状态
+        if param['encryptedData'] and param['iv'] and param['login_key']:
+            # 从redis中拿到login_key并切分拿到 openid 和 session_key
+            openid, session_key = cache.get(param['login_key']).split("&")
+            # 利用微信官方提供算法拿到用户的开放数据
+            data = confirm.WXBizDataCrypt.getInfo(param['encryptedData'], param['iv'], session_key)
+            save_data = {
+                "nickname": data['nickName'],
+                "avatar_url": data['avatarUrl'],
+                "gender": data['gender'],
+                "province": data['province'],
+                "city": data['city'],
+                "country": data['country'],
+            }
+            # 将拿到的用户信息更新到用户表中
+            models.Wxuser.objects.filter(openid=openid).update(**save_data)
+            # 反序列化用户对象,并返回到小程序端
+            data = models.Wxuser.objects.filter(openid=openid).first()
+            data = serializer.User_ser(instance=data, many=False).data
+            return Response({"data": data})
+        else:
+            return Response({"code": 200, "msg": "缺少参数"})
