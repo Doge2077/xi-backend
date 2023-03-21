@@ -18,5 +18,9 @@ from django.urls import path, include
 
 urlpatterns = [
     path('admin/', admin.site.urls),
+    # 用户登录和验证的路由
     path('wechat/', include(('app01.urls', 'app01'), namespace='app01')),
+
+    # 导航首页轮播路由
+    path('header/', include(('app02.urls', 'app02'), namespace='app02')),
 ]

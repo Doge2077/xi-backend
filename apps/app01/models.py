@@ -8,7 +8,7 @@ class Wxuser(models.Model):
     city = models.CharField(max_length=50, null=True, verbose_name='城市')
     province = models.CharField(max_length=50, null=True, verbose_name='省份')
     country = models.CharField(max_length=50, null=True, verbose_name='国家')
-    avatar_url = models.CharField(max_length=200, null=True, verbose_name='头像')
+    avatar_url = models.URLField(max_length=200, null=True, verbose_name='头像')
 
     class Meta:
         app_label = 'app01'
