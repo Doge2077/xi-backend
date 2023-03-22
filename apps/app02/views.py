@@ -1,3 +1,6 @@
+import random
+import pymongo
+
 from django.shortcuts import render
 
 # Create your views here.
@@ -28,3 +31,16 @@ class head_info(APIView):
             }
         }
         return Response(info)
+
+
+class daily_sentences(APIView):
+    def get(self, request):
+
+        MyClient = pymongo.MongoClient(host='localhost', port=27017)
+        db = MyClient['DaySentence']
+
+        collection = db.DaySentence
+
+        documents = collection.find()
+
+        return Response(documents)
