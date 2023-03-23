@@ -44,6 +44,7 @@ class daily_sentences(APIView):
         documents = collection.find()
         id, idx = 0, 0
         sentences = []
+
         # for item in range(100):
         #     sentences.append({
         #         'id': id,
@@ -51,7 +52,7 @@ class daily_sentences(APIView):
         #         'title': documents[item]['title']
         #     })
         #     id += 1
-        while id < 100:
+        while id < 50:
             infolength, titlelength = len(documents[idx]['text']), len(documents[idx]['title'])
             if infolength < 50 and titlelength < 50:
                 sentences.append({

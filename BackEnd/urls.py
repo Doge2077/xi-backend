@@ -23,4 +23,8 @@ urlpatterns = [
 
     # 导航首页轮播路由
     path('header/', include(('app02.urls', 'app02'), namespace='app02')),
+
+    # 全部文汇路由
+    path('articles/', include(('app03.urls', 'app03'), namespace='app03')),
+
 ]
