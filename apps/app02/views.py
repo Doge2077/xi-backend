@@ -1,9 +1,12 @@
 import random
-import pymongo
 
+from bson import ObjectId
+from bson.json_util import dumps
+from django.core.serializers.json import DjangoJSONEncoder
+from django.http import JsonResponse
 from django.shortcuts import render
-
-# Create your views here.
+import json
+import pymongo
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
@@ -35,12 +38,27 @@ class head_info(APIView):
 
 class daily_sentences(APIView):
     def get(self, request):
-
         MyClient = pymongo.MongoClient(host='localhost', port=27017)
         db = MyClient['DaySentence']
-
         collection = db.DaySentence
-
         documents = collection.find()
-
-        return Response(documents)
+        id, idx = 0, 0
+        sentences = []
+        # for item in range(100):
+        #     sentences.append({
+        #         'id': id,
+        #         'info': documents[item]['text'],
+        #         'title': documents[item]['title']
+        #     })
+        #     id += 1
+        while id < 100:
+            infolength, titlelength = len(documents[idx]['text']), len(documents[idx]['title'])
+            if infolength < 50 and titlelength < 50:
+                sentences.append({
+                    'id': id,
+                    'info': documents[idx]['text'],
+                    'title': documents[idx]['title']
+                })
+                id += 1
+            idx += 1
+        return Response(sentences)
