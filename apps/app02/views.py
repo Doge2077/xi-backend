@@ -39,27 +39,20 @@ class head_info(APIView):
 class daily_sentences(APIView):
     def get(self, request):
         MyClient = pymongo.MongoClient(host='localhost', port=27017)
-        db = MyClient['DaySentence']
+        db = MyClient['Sentence']
         collection = db.DaySentence
-        documents = collection.find()
-        id, idx = 0, 0
+        _id = 1
         sentences = []
-
-        # for item in range(100):
-        #     sentences.append({
-        #         'id': id,
-        #         'info': documents[item]['text'],
-        #         'title': documents[item]['title']
-        #     })
-        #     id += 1
-        while id < 50:
-            infolength, titlelength = len(documents[idx]['text']), len(documents[idx]['title'])
-            if infolength < 50 and titlelength < 50:
-                sentences.append({
-                    'id': id,
-                    'info': documents[idx]['text'],
-                    'title': documents[idx]['title']
-                })
-                id += 1
-            idx += 1
-        return Response(sentences)
+        queries = random.sample(range(1, 200), 50)
+        sentences_list = []
+        for query in queries:
+            document = collection.find_one({'sid': query}, {'content': 1, 'title': 1})
+            pram = {
+                'id': _id,
+                'title': document['title'],
+                'content': document['content']
+            }
+            _id += 1
+            sentences_list.append(pram)
+        _id = 1
+        return Response(sentences_list)
