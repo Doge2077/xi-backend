@@ -3,6 +3,8 @@ import json
 import requests
 from lxml import etree
 
+from BackEnd.settings import STATIC_ROOT
+
 _pid = 1
 headers = {
     'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/111.0.0.0 Safari/537.36'
@@ -11,8 +13,9 @@ headers = {
 
 def getData():
     url = 'https://gov.163.com/'
-    resp = requests.get(url=url, headers=headers).text
-    tree = etree.HTML(resp)
+    resp = requests.get(url=url, headers=headers)
+
+    tree = etree.HTML(resp.text)
     temps = tree.xpath('//*[@id="topfocus"]/div[1]/div')[0:3:]
     title = temps[0].xpath('//a[1]/img/@alt')[:3:]
     src = temps[0].xpath('//a[1]/img/@src')[1:4:]
@@ -61,6 +64,7 @@ def run():
         }
     except Exception as e:
         return {
+            'Error': e,
             'code': 404,
             'data': 'None'
         }
@@ -68,16 +72,17 @@ def run():
 def save_img(dic):
     global _pid
     img_bytes = requests.get(url=dic['src'], headers=headers).content
-    with open(f'static/{_pid}.jpg', 'wb') as f:
+    with open(f'{STATIC_ROOT}/{_pid}.jpg', 'wb') as f:
         f.write(img_bytes)
         del dic['src']
-    with open(f'static/{_pid}.json', 'w', encoding='utf-8') as f:
+    with open(f'{STATIC_ROOT}/{_pid}.json', 'w', encoding='utf-8') as f:
         f.write(json.dumps(dic, ensure_ascii=False))
     _pid += 1
 
+
 if __name__ == '__main__':
     data = run()['data']
-    f = open('static/titles.txt', 'w', encoding='utf-8')
+    f = open(f'{STATIC_ROOT}/titles.txt', 'w', encoding='utf-8')
     for i in data:
         f.write(i['title'] + '\n')
         save_img(i)

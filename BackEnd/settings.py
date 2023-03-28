@@ -10,12 +10,14 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/4.1/ref/settings/
 """
 import os
+import socket
 from pathlib import Path
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 from apps import *
 
 BASE_DIR = Path(__file__).resolve().parent.parent
+print(BASE_DIR)
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/4.1/howto/deployment/checklist/
@@ -24,7 +26,11 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-nb&oclgk$h$tylao6-@1!6dzho!ag6i$x=*+7dq-$1op_7%du7'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
+
+dns = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+dns.connect(('8.8.8.8', 80))
+LOCAL_URL = dns.getsockname()[0]
 
 ALLOWED_HOSTS = ['10.32.116.196', '127.0.0.1', '171.10.70.89', '10.34.27.68']
 
@@ -131,17 +137,19 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/4.1/howto/static-files/
 
-STATIC_URL = 'static/'
+STATIC_URL = '/static/'
 
 # 指定 static 静态文件地址
 STATICFILES_DIRS = [
-    os.path.join(BASE_DIR, 'static')
+    os.path.join(BASE_DIR, '/static/')
 ]
 
-MEDIA_URL = 'media/'
+STATIC_ROOT = f'{BASE_DIR}/static'
+
+# MEDIA_URL = 'media/'
 
 # 指定 media 文件夹的路径
-MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+# MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.1/ref/settings/#default-auto-field

@@ -15,6 +15,11 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
+from django.views import static
+from django.views import static ##新增
+from django.conf import settings ##新增
+from django.conf.urls import url ##新增
+from BackEnd import settings
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -27,4 +32,9 @@ urlpatterns = [
     # 全部文汇路由
     path('articles/', include(('app03.urls', 'app03'), namespace='app03')),
 
+    # path('static/<path:path>', static.serve,{'document_root': settings.STATIC_ROOT}, name='static'),
+    url(r'^static/(?P<path>.*)$', static.serve,
+        {'document_root': settings.STATIC_ROOT}, name='static'),
 ]
+
+
