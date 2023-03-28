@@ -15,15 +15,14 @@ class category(APIView):
         table = Client.Sentence.Sentence
         data = table.find()
         data_list = []
-        for i in range(10):
-            pram = data[i]
+        for i in list(data):
+            pram = i
             # print(pram)
             data_list.append(
                 {
                     'cat_a_id': pram['cat_a_id'],
                     'cat_a_title': pram['cat_a_title'],
-                    # 'cat_b_id': [item['cat_b_id'] for item in pram['cat_a_info']],
-                    # 'cat_b_title': [item['cat_b_title'] for item in pram['cat_a_info']]
+                    'cat_b_title': [{'id': item['cat_b_id'], 'title': item['cat_b_title']} for item in pram['cat_a_info']]
                 }
             )
         # return Response(data_list)
