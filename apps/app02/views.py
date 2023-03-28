@@ -5,6 +5,16 @@ import os
 import pymongo
 from rest_framework.response import Response
 from rest_framework.views import APIView
+from .WyNews import main
+from apscheduler.schedulers.background import BackgroundScheduler
+
+try:
+    scheduler = BackgroundScheduler()
+    scheduler.add_job(main, 'interval', hours=1, jitter=120)
+    scheduler.start()
+except Exception as e:
+    print(e)
+    pass
 
 
 class head_info(APIView):

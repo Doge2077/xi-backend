@@ -44,7 +44,6 @@ def get_news(url):
     return parse_page(resp.text)
 
 
-
 def run():
     try:
         a_list = getData()
@@ -69,6 +68,7 @@ def run():
             'data': 'None'
         }
 
+
 def save_img(dic):
     global _pid
     img_bytes = requests.get(url=dic['src'], headers=headers).content
@@ -80,10 +80,14 @@ def save_img(dic):
     _pid += 1
 
 
-if __name__ == '__main__':
+def main():
     data = run()['data']
     f = open(f'{STATIC_ROOT}/titles.txt', 'w', encoding='utf-8')
     for i in data:
         f.write(i['title'] + '\n')
         save_img(i)
     f.close()
+
+
+if __name__ == '__main__':
+    main()
