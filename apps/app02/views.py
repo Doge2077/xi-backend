@@ -1,11 +1,12 @@
 import random
-
+from app02 import WyNews
 from bson import ObjectId
 from bson.json_util import dumps
 from django.core.serializers.json import DjangoJSONEncoder
 from django.http import JsonResponse
 from django.shortcuts import render
 import json
+import os
 import pymongo
 from rest_framework.response import Response
 from rest_framework.views import APIView
@@ -13,27 +14,31 @@ from rest_framework.views import APIView
 
 class head_info(APIView):
     def get(self, request):
-        info = {
-            "message": [
-                {
-                    "image_src": "http://127.0.0.1:8000/static/app02/image01.png",
-                    "open_type": "navigate",
-                    "goods_id": 122,
-                    # "navigator_url": "/pages/goods_detail/index?goods_id=129"
-                },
-                {
-                    "image_src": "http://127.0.0.1:8000/static/app02/image02.png",
-                    "open_type": "navigate",
-                    "goods_id": 123,
-                    # "navigator_url": "/pages/goods_detail/index?goods_id=129"
-                }
-            ],
-            "meta": {
-                "msg": "获取成功",
-                "status": 200
+        dirs = os.listdir('apps/app02/static')
+        num = (len(dirs) - 1) // 2
+        with open('apps/app02/static/titles.txt', 'r', encoding='utf8') as f:
+            titles = f.read().split('\n')
+        data_list = []
+        for item in range(1, num + 1):
+            pram = {
+                'title': titles[item - 1],
+                'rank': item,
+                'img_src': f'http://127.0.0.1:8000/static/{item}.jpg'
             }
-        }
-        return Response(info)
+            data_list.append(pram)
+
+        return Response(data_list)
+
+
+class get_news_info(APIView):
+    def get(self, request):
+        num = request.GET.get('rank')
+        J = open(f'apps/app02/static/{num}.json', 'r', encoding='utf8')
+        jsonData = json.loads(J.read())
+        J.close()
+        return Response(jsonData)
+
+
 
 
 class daily_sentences(APIView):
