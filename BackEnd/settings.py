@@ -33,7 +33,7 @@ dns.connect(('8.8.8.8', 80))
 LOCAL_URL = dns.getsockname()[0]
 print(LOCAL_URL)
 
-ALLOWED_HOSTS = ['10.32.116.196', '127.0.0.1', '171.10.70.89', '10.34.27.68']
+ALLOWED_HOSTS = ['10.32.116.196', '127.0.0.1', '171.10.70.89', '10.34.27.68', '106.34.157.76']
 
 # Application definition
 
