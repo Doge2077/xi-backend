@@ -30,8 +30,7 @@ DEBUG = False
 
 dns = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 dns.connect(('8.8.8.8', 80))
-LOCAL_URL = dns.getsockname()[0]
-print(LOCAL_URL)
+LOCAL_URL = "127.0.0.1"
 
 ALLOWED_HOSTS = ['10.32.116.196', '127.0.0.1', '171.10.70.89', '10.34.27.68', '106.34.157.76']
 
